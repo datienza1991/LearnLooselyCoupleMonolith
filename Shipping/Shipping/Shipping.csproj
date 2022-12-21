@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+  <FrameworkReference Include="Microsoft.AspNetCore.App" />
+</ItemGroup>
+
+<ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+     <PackageReference Include="DotNetCore.CAP" Version="7.0.1" />
+  </ItemGroup>
+
+<ItemGroup>
+  <ProjectReference Include="..\..\Sales\Sales.Contracts\Sales.Contracts.csproj" />
+</ItemGroup>
+</Project>
