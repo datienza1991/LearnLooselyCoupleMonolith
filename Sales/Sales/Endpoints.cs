@@ -1,6 +1,8 @@
 using DotNetCore.CAP;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Sales.Contracts;
@@ -11,21 +13,49 @@ namespace Sales
     {
         public static void MapSales(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/sales", async context =>
-            {
-                await context.Response.WriteAsync("Order has been placed.");
-            });
+            endpoints.MapViewSaleProductPriceEndpoint();
+            endpoints.MapExceptionEndpoint();
 
-            endpoints.MapPost("/sales/orders", async context =>
+            endpoints.MapPost("/sales/orders/{id}", async (int id, MyBody mybody, HttpContext context, IMediator mediator) =>
             {
+                var result = await mediator.Send(new PurchaseProduct
+                {
+                    ProductId = Guid.NewGuid()
+                });
+
                 var publisher = context.RequestServices.GetService<ICapPublisher>();
                 await publisher.PublishAsync(nameof(OrderPlaced), new OrderPlaced()
                 {
                     OrderId = Guid.NewGuid()
                 });
 
-                await context.Response.WriteAsync("Order has been placed.");
+                return Results.Ok("Order has been placed");
             });
         }
     }
+
+    internal static class ViewSaleProductPriceEndpoint
+    {
+        public static void MapViewSaleProductPriceEndpoint(this IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapGet("/sales/product/{id}", async (int id, HttpContext context) =>
+            {
+                var randomPrice = new Random().Next(1, 100);
+                await context.Response.WriteAsync($"Product with {id} has a price of {randomPrice}");
+            });
+        }
+    }
+
+    internal static class ExceptionEndpoint
+    {
+        public static void MapExceptionEndpoint(this IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapGet("/sales/error", () =>
+            {
+                Results.BadRequest("Oops, the '/' route has thrown an exception.");
+            });
+        }
+    }
+
+    public record MyBody(int id);
 }

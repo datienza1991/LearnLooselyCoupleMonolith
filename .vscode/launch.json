@@ -13,7 +13,7 @@
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
-            "stopAtEntry": false
+            "stopAtEntry": false,
         },
         {
             "name": ".NET Core Launch (Worker)",
@@ -30,6 +30,14 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
+        },
+    ],
+    "compounds": [
+        {
+          "name": "AspNetCore / Worker",
+          "configurations": [".NET Core Launch (AspNetCore)", ".NET Core Launch (Worker)"],
+          "preLaunchTask": "build",
+          "stopAll": true
         }
-    ]
+      ]
 }

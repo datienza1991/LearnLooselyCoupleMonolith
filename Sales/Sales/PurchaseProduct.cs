@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Sales
 {
-    public class PurchaseProduct : IRequest<string>
+    public class PurchaseProduct : IRequest
     {
         public Guid ProductId { get; set; }
     }
@@ -30,11 +30,11 @@ namespace Sales
                 ProductId = productId
             });
 
-            return Ok(result);
+            return NoContent();
         }
     }
 
-    public class PurchaseProductHandler : IRequestHandler<PurchaseProduct, string>
+    public class PurchaseProductHandler : IRequestHandler<PurchaseProduct>
     {
         private readonly ILogger<PurchaseProductHandler> logger;
 
@@ -43,10 +43,11 @@ namespace Sales
             this.logger = logger;
         }
 
-        public Task<string> Handle(PurchaseProduct request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(PurchaseProduct request, CancellationToken cancellationToken)
         {
             this.logger.LogInformation($"PurchaseProductID is {request.ProductId.ToString()}");
-            return Task.FromResult(request.ProductId.ToString());
+            await Task.CompletedTask;
+            return Unit.Value;
         }
     }
 }
