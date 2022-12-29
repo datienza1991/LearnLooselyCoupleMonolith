@@ -2,6 +2,7 @@ using DotNetCore.CAP;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,14 +17,13 @@ namespace Sales
             endpoints.MapViewSaleProductPriceEndpoint();
             endpoints.MapExceptionEndpoint();
 
-            endpoints.MapPost("/sales/orders/{id}", async (int id, MyBody mybody, HttpContext context, IMediator mediator) =>
+            endpoints.MapPost("/sales/orders/{id}", async (int id, MyBody mybody, HttpContext context, IMediator mediator, [FromServices]ICapPublisher publisher) =>
             {
                 var result = await mediator.Send(new PurchaseProduct
                 {
                     ProductId = Guid.NewGuid()
                 });
 
-                var publisher = context.RequestServices.GetService<ICapPublisher>();
                 await publisher.PublishAsync(nameof(OrderPlaced), new OrderPlaced()
                 {
                     OrderId = Guid.NewGuid()
